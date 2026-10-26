@@ -74,20 +74,6 @@ public class Ventana {
         txtDatos.setFont(new java.awt.Font(
                 "Monospaced", java.awt.Font.PLAIN, 14));
 
-        // Opciones del formulario de ingreso.
-        cmbTipo.removeAllItems();
-        cmbTipo.addItem("MALWARE");
-        cmbTipo.addItem("HARDWARE");
-        cmbTipo.addItem("SOFTWARE");
-        cmbTipo.addItem("RED");
-        cmbTipo.addItem("OTRO");
-
-        cmbPrioridad.removeAllItems();
-        cmbPrioridad.addItem("1");
-        cmbPrioridad.addItem("2");
-        cmbPrioridad.addItem("3");
-        cmbPrioridad.addItem("4");
-        cmbPrioridad.addItem("5");
 
         lblIncidente.setText("Nuevo incidente");
 
@@ -114,6 +100,7 @@ public class Ventana {
 
     private void cargarCasosPrueba() {
 
+        // CASO 1: Ya estaba registrado
         incidentes.add(new IncidenteUI(
                 "INC-001",
                 "MALWARE",
@@ -121,6 +108,15 @@ public class Ventana {
                 1
         ));
 
+        // CASO 2: NUEVO
+        incidentes.add(new IncidenteUI(
+                "INC-008",
+                "SOFTWARE",
+                "Error en el funcionamiento del software",
+                1
+        ));
+
+        // CASO 3: Ya estaba registrado
         incidentes.add(new IncidenteUI(
                 "INC-002",
                 "HARDWARE",
@@ -128,11 +124,44 @@ public class Ventana {
                 2
         ));
 
+        // CASO 4: NUEVO
+        incidentes.add(new IncidenteUI(
+                "INC-004",
+                "HARDWARE",
+                "Problema en un componente del equipo",
+                2
+        ));
+
+        // CASO 5: Ya estaba registrado
         incidentes.add(new IncidenteUI(
                 "INC-003",
                 "RED",
                 "Problema de conexion de red",
                 3
+        ));
+
+        // CASO 6: NUEVO
+        incidentes.add(new IncidenteUI(
+                "INC-007",
+                "SOFTWARE",
+                "Error en una aplicacion",
+                3
+        ));
+
+        // CASO 7: NUEVO
+        incidentes.add(new IncidenteUI(
+                "INC-006",
+                "HARDWARE",
+                "Falla en un dispositivo",
+                3
+        ));
+
+        // CASO 8: NUEVO
+        incidentes.add(new IncidenteUI(
+                "INC-005",
+                "RED",
+                "Intermitencia en la conexion de red",
+                4
         ));
 
         ordenarPorPrioridad();
