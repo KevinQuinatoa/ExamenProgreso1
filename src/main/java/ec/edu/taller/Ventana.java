@@ -1,4 +1,3 @@
-
 package ec.edu.taller;
 
 import javax.swing.*;
@@ -35,7 +34,6 @@ public class Ventana {
             new ArrayList<>();
 
     private IncidenteUI incidenteActual;
-    private int indiceActual = -1;
 
     // Clase auxiliar para manejar los datos en esta ventana.
     private static class IncidenteUI {
@@ -95,7 +93,7 @@ public class Ventana {
 
         // Mostrar el primer incidente y los contadores.
         actualizarContadores();
-        mostrarSiguiente();
+        mostrarPrimero();
     }
 
     private void cargarCasosPrueba() {
@@ -224,44 +222,55 @@ public class Ventana {
     }
 
 
+    // Devuelve el pendiente de mayor prioridad (menor numero),
+    // equivalente al peek() de la PriorityQueue.
+    private IncidenteUI obtenerSiguientePendiente() {
+
+        ordenarPorPrioridad();
+
+        for (IncidenteUI incidente : incidentes) {
+            if ("PENDIENTE".equals(incidente.estado)) {
+                return incidente;
+            }
+        }
+
+        return null;
+    }
+
+    // Muestra el incidente de mayor prioridad (el que se atendera).
+    private void mostrarPrimero() {
+
+        incidenteActual = obtenerSiguientePendiente();
+
+        mostrarDatos(incidenteActual);
+        actualizarContadores();
+    }
+
+    // Solo para VER: avanza al siguiente pendiente segun el orden
+    // de prioridad. No atiende ni modifica ningun incidente.
     private void mostrarSiguiente() {
 
         ordenarPorPrioridad();
 
-        if (incidentes.isEmpty()) {
+        List<IncidenteUI> pendientes = new ArrayList<>();
+        for (IncidenteUI incidente : incidentes) {
+            if ("PENDIENTE".equals(incidente.estado)) {
+                pendientes.add(incidente);
+            }
+        }
+
+        if (pendientes.isEmpty()) {
             incidenteActual = null;
-            indiceActual = -1;
             mostrarDatos(null);
             actualizarContadores();
             return;
         }
 
-        int total = incidentes.size();
-        int inicio = indiceActual;
+        int posicion = pendientes.indexOf(incidenteActual);
+        incidenteActual = pendientes.get(
+                (posicion + 1) % pendientes.size());
 
-        // Buscar el siguiente incidente pendiente.
-        for (int i = 1; i <= total; i++) {
-
-            int siguiente = (inicio + i) % total;
-
-            IncidenteUI incidente = incidentes.get(siguiente);
-
-            if ("PENDIENTE".equals(incidente.estado)) {
-
-                incidenteActual = incidente;
-                indiceActual = siguiente;
-
-                mostrarDatos(incidenteActual);
-                actualizarContadores();
-                return;
-            }
-        }
-
-        // No quedan incidentes pendientes.
-        incidenteActual = null;
-        indiceActual = -1;
-
-        mostrarDatos(null);
+        mostrarDatos(incidenteActual);
         actualizarContadores();
     }
 
@@ -332,7 +341,7 @@ public class Ventana {
 
         ordenarPorPrioridad();
         actualizarContadores();
-        mostrarSiguiente();
+        mostrarPrimero();
 
         // Limpiar los campos del formulario.
         txtCodigo.setText("");
@@ -348,9 +357,10 @@ public class Ventana {
 
     private void atenderIncidente() {
 
-        if (incidenteActual == null
-                || !"PENDIENTE".equals(incidenteActual.estado)) {
+        // Se atiende el de mayor prioridad, no el que este en pantalla.
+        IncidenteUI siguiente = obtenerSiguientePendiente();
 
+        if (siguiente == null) {
             JOptionPane.showMessageDialog(
                     Panel,
                     "No hay un incidente pendiente para atender.",
@@ -360,17 +370,16 @@ public class Ventana {
             return;
         }
 
-        incidenteActual.estado = "ATENDIDO";
+        siguiente.estado = "ATENDIDO";
 
         JOptionPane.showMessageDialog(
                 Panel,
-                "Incidente " + incidenteActual.codigo
+                "Incidente " + siguiente.codigo
                         + " atendido correctamente."
         );
 
-        actualizarContadores();
         listarIncidentes();
-        mostrarSiguiente();
+        mostrarPrimero();
     }
 
     private void listarIncidentes() {
